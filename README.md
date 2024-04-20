@@ -1,1 +1,1 @@
-# realisationOfAlghoritmAToFindShortestPathInAGraph
+# realisationOfAlgorithmAToFindShortestPathInAGraph
