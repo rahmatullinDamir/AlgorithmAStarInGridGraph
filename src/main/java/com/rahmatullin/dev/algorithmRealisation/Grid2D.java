@@ -1,4 +1,4 @@
-package com.rahmatullin.dev;
+package com.rahmatullin.dev.algorithmRealisation;
 /*
  * File: Grid2D.java
  * Description:
@@ -21,12 +21,12 @@ public class Grid2D {
     private ArrayList<Point> gridObstacles;
 
 
-    Grid2D(int gridWidth, int gridHeight) {
+    public Grid2D(int gridWidth, int gridHeight) {
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
         this.grid2D = new Point[gridWidth][gridHeight];
-        for (int i = 0; i < gridHeight; i++) {
-            for (int j = 0; j < gridWidth; j++) {
+        for (int i = 0; i < gridWidth; i++) {
+            for (int j = 0; j < gridHeight; j++) {
                 grid2D[i][j] = new Point(i, j);
             }
         }
@@ -78,16 +78,27 @@ public class Grid2D {
     }
 
 
-    public void printMatrix() {
+//    public void printMatrix() {
+//        for (int ir = 0; ir < gridWidth; ir++) {
+//            for (int ic = 0; ic < gridHeight; ic++) {
+//                System.out.print(grid2D[ir][ic].status.getTitle() + " ");
+//            }
+//            System.out.println();
+//        }
+//    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
         for (int ir = 0; ir < gridWidth; ir++) {
             for (int ic = 0; ic < gridHeight; ic++) {
-                System.out.print(grid2D[ir][ic].status.getTitle() + " ");
+                sb.append(grid2D[ir][ic].status.getTitle()).append(" ");
             }
-            System.out.println();
+            sb.append(System.lineSeparator());
         }
+        return sb.toString();
     }
-
-//        public static void printPath(ArrayList<Point> path) {
+    //        public static void printPath(ArrayList<Point> path) {
 //            for (Point point : path) {
 //                System.out.print("(" + point.x + ", " + point.y + ") ");
 //            }

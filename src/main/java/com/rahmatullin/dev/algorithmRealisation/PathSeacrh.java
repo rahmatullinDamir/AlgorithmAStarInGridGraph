@@ -1,4 +1,4 @@
-package com.rahmatullin.dev;
+package com.rahmatullin.dev.algorithmRealisation;
 /*
  * File: PathSearch.java
  * Description:

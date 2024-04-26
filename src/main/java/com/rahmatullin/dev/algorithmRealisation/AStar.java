@@ -1,4 +1,4 @@
-package com.rahmatullin.dev;
+package com.rahmatullin.dev.algorithmRealisation;
 /*
  * File: AStar.java
  * Description: Created A* algorithm to find the shortest path in GridGraph
@@ -9,6 +9,7 @@ package com.rahmatullin.dev;
  */
 
 import com.rahmatullin.dev.priorityQueue.PriorityQueueMin;
+import com.rahmatullin.dev.utils.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,10 +31,14 @@ public class AStar {
         this.openSet = new PriorityQueueMin<>(Comparator.comparingDouble(point -> point.fCost)); // Сортировка узлов по общей стоимости
         this.closedSet = new HashSet<>();
     }
-    public ArrayList<Point> aStarSearch() {
+    public ArrayList<Point> aStarSearch(boolean printIntermediateStates) {
         start.status = Point.Status.OPENED;
         openSet.add(start);
         while (!openSet.isEmpty()) { // Пока в открытом множестве есть узлы
+            if (printIntermediateStates) {
+                Logger.writeLine(grid2D.toString());
+
+            }
             Point current = openSet.extract(); // Выбор узла с наименьшей общей стоимостью
             current.status = Point.Status.OPENED;
             closedSet.add(current); // Перемещение узла в закрытое множество

@@ -1,4 +1,4 @@
-package com.rahmatullin.dev;
+package com.rahmatullin.dev.algorithmRealisation;
 /*
  * File: Point.java
  * Description:
@@ -32,7 +32,7 @@ public class Point {
     public int gCost;
     public int hCost;
     public int fCost;
-    Status status;
+    public Status status;
 
     public Point(int x, int y){
         this.x = x;
@@ -56,6 +56,17 @@ public class Point {
         return x == point.x && y == point.y;
     }
 
+
+
+
+    /**
+     * Returns the integer representation of a cell's filled status.
+     * @param status The status of the cell
+     * @return The integer representation of the status
+     */
+    public static int is(Status status) {
+        return status.ordinal();
+    }
     @Override
     public String toString() {
         return "Point{" +
@@ -68,6 +79,7 @@ public class Point {
                 ", status=" + status +
                 '}';
     }
+
 
     @Override
     public int hashCode() {

@@ -9,6 +9,8 @@
 
 package com.rahmatullin.dev.io;
 
+import com.rahmatullin.dev.algorithmRealisation.Point;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,7 +23,7 @@ public class PPMExporter {
     /**
      * Writes a pseudo 2D array into the file
      *
-     * @param cellData      1D array of pseudo 2D data
+     * @param cellData      2D array contains Points of GridGraph
      * @param rows          Rows count
      * @param cols          Columns count
      * @param fileName      File path and name with *.PPM extension
@@ -29,7 +31,7 @@ public class PPMExporter {
      * @param maxValue      Maximal value in the data array
      * @param upScaleFactor Zoom factor
      */
-    public static void writeFile(int[] cellData, int rows, int cols, String fileName,
+    public static void writeFile(Point[][] cellData, int rows, int cols, String fileName,
                                  int minValue, int maxValue, int upScaleFactor) throws IOException {
         // Upscale dimensions
         int upscaledRows = rows * upScaleFactor;
@@ -53,7 +55,7 @@ public class PPMExporter {
                     int origCol = col / upScaleFactor;
 
                     // extract the cell data value
-                    int value = cellData[origRow * cols + origCol];
+                    int value = Point.is(cellData[origRow][origCol].status);
 
                     // normalize it to be in [0 ... 255]
                     int color = maxColorValue * (value - minValue) / (maxValue - minValue);
