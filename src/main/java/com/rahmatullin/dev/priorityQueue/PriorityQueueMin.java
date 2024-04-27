@@ -77,6 +77,12 @@ public class PriorityQueueMin<T> extends AbstractPriorityQueue<T> {
         }
     }
 
+    /**
+     * base function implements from java.util.PriorityQueue realisation
+     * @param o some object to check
+     * @return index of element or -1 if element not in
+     */
+
     private int indexOf(Object o) {   // base function implements from java.util.PriorityQueue realisation
         if (o != null) {              // this function check is object in PriorityQueue or not and returns
             final Object[] es = data; // index of element/-1 if element not in
@@ -86,8 +92,14 @@ public class PriorityQueueMin<T> extends AbstractPriorityQueue<T> {
         }
         return -1;
     }
-    public boolean contains(Object o) { // base function implements from java.util.PriorityQueue realisation
-        return indexOf(o) >= 0;         // this function return true if object in PriorityQueue or false if it not in
+
+    /**
+     * base function implements from java.util.PriorityQueue realisation
+     * @param o some object to check
+     * @return this function return true if object in PriorityQueue or false if it not in
+     */
+    public boolean contains(Object o) {
+        return indexOf(o) >= 0;
     }
 
     /**

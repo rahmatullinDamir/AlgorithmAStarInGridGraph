@@ -1,4 +1,5 @@
 package com.rahmatullin.dev.algorithmRealisation;
+
 /*
  * File: AStar.java
  * Description: Created A* algorithm to find the shortest path in GridGraph
@@ -16,73 +17,114 @@ import java.util.stream.Collectors;
 
 public class AStar {
 
-    private PriorityQueueMin<Point> openSet; // Приоритетная очередь для узлов, ожидающих оценки
-    private HashSet<Point> closedSet; // Множество для хранения уже оцененных узлов
-    private Point start, end; // Начальный и конечный узлы
+    // Priority queue for nodes awaiting evaluation
+    private PriorityQueueMin<Point> openSet;
+    // Set for storing evaluated nodes
+    private HashSet<Point> closedSet;
+    // Start and end nodes
+    private Point start, end;
+    // Reference to the grid
     private Grid2D grid2D;
+    // Grid matrix
     private Point[][] matrix;
 
-
+    /**
+     * Constructor for initializing the A* algorithm.
+     * Initializes the algorithm with the start and end points and the grid.
+     * Sets up the open set sorted by total cost and initializes the closed set.
+     *
+     * @param start The starting point of the path.
+     * @param end The ending point of the path.
+     * @param grid2D The grid on which the path is to be found.
+     */
     public AStar(Point start, Point end, Grid2D grid2D) {
         this.matrix = grid2D.getGrid();
         this.grid2D = grid2D;
         this.start = this.matrix[start.y][start.x];
         this.end = this.matrix[end.y][end.x];
-        this.openSet = new PriorityQueueMin<>(Comparator.comparingDouble(point -> point.fCost)); // Сортировка узлов по общей стоимости
+        this.openSet = new PriorityQueueMin<>(Comparator.comparingDouble(point -> point.fCost)); // Sorting nodes by total cost
         this.closedSet = new HashSet<>();
     }
+
+    /**
+     * Main method for pathfinding using the A* algorithm.
+     * Iterates through the open set, evaluating nodes until the end point is found or the open set is empty.
+     * Prints intermediate states if requested.
+     *
+     * @param printIntermediateStates Whether to print the grid's state at each iteration.
+     * @return An ArrayList of Points representing the shortest path, or null if no path is found.
+     */
     public ArrayList<Point> aStarSearch(boolean printIntermediateStates) {
         start.status = Point.Status.OPENED;
         openSet.add(start);
-        while (!openSet.isEmpty()) { // Пока в открытом множестве есть узлы
+        while (!openSet.isEmpty()) { // While there are nodes in the open set
             if (printIntermediateStates) {
                 Logger.writeLine(grid2D.toString());
-
             }
-            Point current = openSet.extract(); // Выбор узла с наименьшей общей стоимостью
+            Point current = openSet.extract(); // Select the node with the lowest total cost
             current.status = Point.Status.OPENED;
-            closedSet.add(current); // Перемещение узла в закрытое множество
+            closedSet.add(current); // Move the node to the closed set
 
-            if (current.equals(end)) { // Если текущий узел является целевым
-                return PathSeacrh.reconstructPath(current); // Восстановление пути и возврат его
+            if (current.equals(end)) { // If the current node is the end point
+                return PathSeacrh.reconstructPath(current); // Reconstruct and return the path
             }
 
-            for (Point neighbor : neighbors(current)) { // Рассмотрение всех соседей текущего узла
-                if (closedSet.contains(neighbor)) continue; // Пропуск уже оцененных узлов
+            for (Point neighbor : neighbors(current)) { // Consider all neighbors of the current node
+                if (closedSet.contains(neighbor)) continue; // Skip already evaluated nodes
 
-                int tentativeGCost = current.gCost + heuristic(current, neighbor); // Вычисление предварительной фактической стоимости
-                if ((!(openSet.contains(neighbor))) || tentativeGCost < neighbor.gCost) { // Если узел не в открытом множестве или новая стоимость меньше
-                    neighbor.parent = current; // Установка родителя для восстановления пути
-                    neighbor.gCost = tentativeGCost; // Обновление фактической стоимости
-                    neighbor.hCost = heuristic(neighbor, end); // Вычисление эвристической стоимости
-                    neighbor.fCost = neighbor.gCost + neighbor.hCost; // Обновление общей стоимости
+                int tentativeGCost = current.gCost + heuristic(current, neighbor); // Calculate the tentative gCost
+                if ((!(openSet.contains(neighbor))) || tentativeGCost < neighbor.gCost) { // If the node is not in the open set or the new cost is lower
+                    neighbor.parent = current; // Set the parent for path reconstruction
+                    neighbor.gCost = tentativeGCost; // Update the gCost
+                    neighbor.hCost = heuristic(neighbor, end); // Calculate the heuristic cost
+                    neighbor.fCost = neighbor.gCost + neighbor.hCost; // Update the total cost
 
-                    if (!(openSet.contains(neighbor))) { // Если узел еще не в открытом множестве
+                    if (!(openSet.contains(neighbor))) { // If the node is not in the open set
                         neighbor.status = Point.Status.OPENED;
-                        openSet.add(neighbor); // Добавление узла в открытое множество
+                        openSet.add(neighbor); // Add the node to the open set
                     }
                 }
             }
         }
 
         return null;
-
     }
 
-//    public boolean inBounds(Point dot) {
-//        return 0 <= dot.x && dot.x < grid2D.getGridWidth() && 0 <= dot.y && dot.y < grid2D.getGridHeight();
-//    }
-
+    /**
+     * Checks if a node is passable.
+     * Determines if a node is not an obstacle in the grid.
+     *
+     * @param dot The node to check.
+     * @return True if the node is passable, false otherwise.
+     */
     public boolean passable(Point dot) {
         return !grid2D.getGridObstacles().contains(dot);
     }
+
+    /**
+     * Calculates the heuristic cost.
+     * Uses the Euclidean distance to estimate the cost from one point to another.
+     *
+     * @param first The starting point.
+     * @param second The ending point.
+     * @return The heuristic cost as an integer.
+     */
     public int heuristic(Point first, Point second){
         return (int) (10 * Math.sqrt((second.x - first.x)*(second.x - first.x) + (second.y - first.y)*(second.y - first.y)));
     }
+
+    /**
+     * Retrieves the neighbors of the current node.
+     * Considers all valid neighbors within the grid boundaries.
+     * Filters out impassable neighbors and marks them as opened.
+     *
+     * @param current The current node.
+     * @return An ArrayList of Points representing the neighbors.
+     */
     public ArrayList<Point> neighbors(Point current) {
         ArrayList<Point> results = new ArrayList<>();
 
-// Проверяем, не находится ли узел на краю сетки
+        // Check neighbors on the edges of the grid
         if (current.x + 1 < matrix.length) {
             results.add(matrix[current.x + 1][current.y]);
         }
@@ -108,15 +150,12 @@ public class AStar {
             results.add(matrix[current.x - 1][current.y + 1]);
         }
 
-
-        // Фильтрация соседей, которые находятся в пределах сетки и являются проходимыми
+        // Filter neighbors that are passable and mark them as opened
         results = results.stream()
                 .filter(this::passable)
                 .peek(val -> val.status = Point.Status.OPENED)
                 .collect(Collectors.toCollection(ArrayList::new));
 
         return results;
-
     }
 }
-

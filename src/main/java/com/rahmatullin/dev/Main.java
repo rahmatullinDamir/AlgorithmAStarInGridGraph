@@ -13,11 +13,20 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
+/**
+ * Main class for the A* pathfinding algorithm demonstration.
+ * This class initializes the grid, sets up the start and end points,
+ * and runs the A* algorithm to find the shortest path.
+ * It also handles command-line arguments for customizing the grid and pathfinding process.
+ * The results, including the grid state and execution time, can be logged to the console or saved as an image or csv table.
+ */
 public class Main {
     public static void main(String[] args) {
+        // Initialize logging and timing
         Logger.writeLine("Start!\n");
         Stopwatch timer = new Stopwatch();
 
+        // Log the purpose and usage of the program
         Logger.writeLine("Find the shortest path on a 2D grid.",
                 "Marking cells: ",
                 "\uD83D\uDFEB - closed cells",
@@ -40,17 +49,16 @@ public class Main {
                 "\tChoose count of expirements: -exp N",
                 "\tWrite cell data to PPM file: -image \n");
 
-
-        // allow the unicode characters support
+        // Enable Unicode character support
         System.setProperty("file.encoding", "UTF-8");
 
-        // make 'saves' folder
+        // Create a 'saves' directory for storing output files
         String savesDirName = "saves";
         String currentDirectory = System.getProperty("user.dir");
         String savesFolderPath = Paths.get(currentDirectory, savesDirName).toString();
 
         try {
-            // Check if the 'saves' folder exists, if not, create it
+            // Ensure the 'saves' directory exists
             if (!Files.exists(Paths.get(savesFolderPath))) {
                 Files.createDirectory(Paths.get(savesFolderPath));
             }
@@ -58,22 +66,24 @@ public class Main {
             Logger.write("Error creating 'saves' folder", e.getMessage(), "\n");
         }
 
-        // define the program settings
-        boolean writeToConsole = true; // write grid data to console
-        boolean writeToImage = true; // write grid data to image
-        int resx = 20; // cells count in each direction
-        int resy = 20; // cells count in each direction
-        int x1 = 0; // cells count in each direction
-        int y1 = 0; // cells count in each direction
-        int x2 = 12; // cells count in each direction
-        int y2 = 10; // cells count in each direction
-        int obstaclesNum = 20; // cells count in each direction
-        int imageMinRes = 300; // minimal resolution of the image to save to
-        int exp = 4; // number of experiments
+        // Define default settings and parse command-line arguments
+        boolean writeToConsole = true; // Default: write grid data to console
+        boolean writeToImage = true; // Default: write grid data to image
+        int resx = 20; // Default grid resolution in x-direction
+        int resy = 20; // Default grid resolution in y-direction
+        int x1 = 0; // Default start point x-coordinate
+        int y1 = 0; // Default start point y-coordinate
+        int x2 = 12; // Default end point x-coordinate
+        int y2 = 10; // Default end point y-coordinate
+        int obstaclesNum = 20; // Default number of obstacles
+        int imageMinRes = 300; // Minimal resolution for image output
+        int exp = 4; // Default number of experiments
         Scanner scan = new Scanner(System.in);
 
+        // Parse command-line arguments
         if (args.length > 0) {
             for (int i = 0; i < args.length; i++) {
+                // Parse resolution arguments
                 if (args[i].equals("-resx") && i + 1 < args.length) {
                     try {
                         resx = Integer.parseInt(args[i + 1]);
@@ -86,23 +96,25 @@ public class Main {
                     try {
                         resy = Integer.parseInt(args[i + 1]);
                     } catch (NumberFormatException ex) {
-                        Logger.writeLine("Invalid exp value. Using default!");
+                        Logger.writeLine("Invalid resolution value. Using default!");
                     }
                     i++; // Skip the next argument
                 }
+                // Parse obstacle count argument
                 else if (args[i].equals("-obs") && i + 1 < args.length) {
                     try {
                         obstaclesNum = Integer.parseInt(args[i + 1]);
                     } catch (NumberFormatException ex) {
-                        Logger.writeLine("Invalid exp value. Using default!");
+                        Logger.writeLine("Invalid obstacle count. Using default!");
                     }
                     i++; // Skip the next argument
                 }
+                // Parse start and end point coordinates
                 else if (args[i].equals("-x1") && i + 1 < args.length) {
                     try {
                         x1 = Integer.parseInt(args[i + 1]);
                     } catch (NumberFormatException ex) {
-                        Logger.writeLine("Invalid exp value. Using default!");
+                        Logger.writeLine("Invalid start point x-coordinate. Using default!");
                     }
                     i++; // Skip the next argument
                 }
@@ -110,7 +122,7 @@ public class Main {
                     try {
                         y1 = Integer.parseInt(args[i + 1]);
                     } catch (NumberFormatException ex) {
-                        Logger.writeLine("Invalid exp value. Using default!");
+                        Logger.writeLine("Invalid start point y-coordinate. Using default!");
                     }
                     i++; // Skip the next argument
                 }
@@ -118,7 +130,7 @@ public class Main {
                     try {
                         x2 = Integer.parseInt(args[i + 1]);
                     } catch (NumberFormatException ex) {
-                        Logger.writeLine("Invalid exp value. Using default!");
+                        Logger.writeLine("Invalid end point x-coordinate. Using default!");
                     }
                     i++; // Skip the next argument
                 }
@@ -126,18 +138,20 @@ public class Main {
                     try {
                         y2 = Integer.parseInt(args[i + 1]);
                     } catch (NumberFormatException ex) {
-                        Logger.writeLine("Invalid exp value. Using default!");
+                        Logger.writeLine("Invalid end point y-coordinate. Using default!");
                     }
                     i++; // Skip the next argument
                 }
+                // Parse experiment count argument
                 else if (args[i].equals("-exp") && i + 1 < args.length) {
                     try {
                         exp = Integer.parseInt(args[i + 1]);
                     } catch (NumberFormatException ex) {
-                        Logger.writeLine("Invalid exp value. Using default!");
+                        Logger.writeLine("Invalid experiment count. Using default!");
                     }
                     i++; // Skip the next argument
                 }
+                // Parse console and image output flags
                 else if (args[i].equals("-console")) {
                     writeToConsole = true;
                 } else if (args[i].equals("-image")) {
@@ -146,6 +160,7 @@ public class Main {
             }
         }
 
+        // Initialize a table for CSV export
         String[][] table = new String[exp][6]; // for write data to csv table
         for (int i = 0; i < exp; i++) {
             timer.reset();
@@ -153,18 +168,20 @@ public class Main {
             Logger.writeLine("          Exp number: " + (i + 1));
             Logger.writeLine("------------------------------------");
             try {
+                // Initialize the grid and obstacles
                 Grid2D grid = new Grid2D(resx, resy);
                 grid.createObstaclesInGrid(obstaclesNum);
                 var startPoint = new Point(x1, y1);
                 var endPoint = new Point(x2, y2);
                 AStar astr = new AStar(startPoint, endPoint, grid);
 
+                // Log the initial grid state if requested
                 if (writeToConsole) {
                     Logger.writeLine("Initial state of the gridGraph:");
                     Logger.write(grid.toString());
                     Logger.writeLine("------------------------------------");
                 }
-                // save to image
+                // Save the grid state to an image if requested
                 if (writeToImage) {
                     String fileName = Paths.get(savesDirName, String.format("%06d.ppm", i)).toString();
                     PPMExporter.writeFile(grid.getGrid(),
@@ -173,6 +190,7 @@ public class Main {
                             Point.is(Point.Status.PATH),
                             ((resx < imageMinRes)) ? imageMinRes / resx : (resy < imageMinRes) ? imageMinRes / resy : 1);
                 }
+                // Run the A* algorithm and log the results
                 if (astr.aStarSearch(writeToConsole) != null) {
                     Logger.writeLine(grid.toString());
                     Logger.writeLine("Ok!");
@@ -183,7 +201,9 @@ public class Main {
                     table[i][3] = resx + "/" + resy;
                     table[i][4] = String.valueOf(obstaclesNum);
                     table[i][5] = String.valueOf(timer.getElapsedTime()) + "[s]";
+                    // Check if the current experiment is not the last one
                     if (i != exp - 1) {
+                        // Prompt the user to input new values for the next experiment
                         try {
                             System.out.println("Введите x (разрешение) для следующего эксперемента");
                             resx = scan.nextInt();
@@ -200,28 +220,35 @@ public class Main {
                             System.out.println("Введите количество препятствий в графе-сетке");
                             obstaclesNum = scan.nextInt();
                         } catch (Exception e) {
+                            // Log an error message if the input is invalid
                             Logger.writeLine("Invalid value. Using default!");
                         }
                     }
-                } else {
+                }
+                else {
+                    // Log a message if the A* algorithm couldn't find a path
                     Logger.writeLine("AStar Algorithm can't find path, try again...");
                 }
             } catch (Exception e) {
+                // print exception if something went wrong for example couldn't write a file.
                 e.printStackTrace();
             }
         }
 
-
+        // Define the header for the CSV file
         String[] header = {"e", "startCoords", "endCoords" ,"res x/y", "numOfObstacles", "time"};
+        // Specify the file name and delimiter for the CSV file
         String fileName = "timeToGetPathInGrid.csv";
         String delimiter = ";";
 
-
+        // Attempt to write the data to a CSV file
         try {
             CSVExporter.writeFile(table, fileName, delimiter, header);
             System.out.println("CSV file created successfully!");
         } catch (IOException e) {
+            // Log any IOException that occurs during the file writing process
             e.printStackTrace();
         }
+
     }
 }
