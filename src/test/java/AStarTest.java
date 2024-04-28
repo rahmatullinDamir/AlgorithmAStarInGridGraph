@@ -40,14 +40,11 @@ class AStarTest {
         assertNotNull(path, "Path should not be null");
         assertTrue(path.contains(start), "Path should contain the start point");
         assertTrue(path.contains(end), "Path should contain the end point");
-        // Add more assertions to check the path's correctness
     }
 
     @Test
     void testAStarSearchWithObstacle() {
-        // Assuming the obstacle is at (1, 1)
         Point obstacle = pointsArray.getFirst();
-        System.out.println(obstacle);
         assertFalse(aStar.passable(obstacle), "Obstacle should not be passable");
     }
 
@@ -75,6 +72,5 @@ class AStarTest {
         assertNotNull(path, "Path should not be null");
         assertTrue(path.contains(start), "Path should contain the start point");
         assertTrue(path.contains(end), "Path should contain the end point");
-        // Add more assertions to check the path's correctness
     }
 }
