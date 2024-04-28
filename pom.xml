@@ -13,11 +13,36 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.junit</groupId>
-            <artifactId>junit5-engine</artifactId>
-            <version>5.0.0-ALPHA</version>
-        </dependency>
-    </dependencies>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>5.0.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>5.0.0</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Mockito for mocking -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>3.11.2</version>
+                <scope>test</scope>
+            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>net.bytebuddy</groupId>-->
+<!--                <artifactId>byte-buddy</artifactId>-->
+<!--                <version>1.12.1</version> &lt;!&ndash; Use the latest version available &ndash;&gt;-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>net.bytebuddy</groupId>-->
+<!--                <artifactId>byte-buddy-agent</artifactId>-->
+<!--                <version>1.12.1</version> &lt;!&ndash; Use the latest version available &ndash;&gt;-->
+<!--            </dependency>-->
+
+        </dependencies>
 </project>
