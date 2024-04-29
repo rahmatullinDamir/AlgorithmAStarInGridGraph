@@ -12,6 +12,8 @@ package com.rahmatullin.dev.algorithmRealisation;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.rahmatullin.dev.utils.Utils.getRandomValue;
+
 public class Grid2D {
     // Initialize the random number generator
     private final Random rnd = new Random();
@@ -76,8 +78,8 @@ public class Grid2D {
         var obstacles = new ArrayList<Point>();
         // Generate unique coordinates for obstacles
         while (obstacles.size() < numObstacles) {
-            int x = rnd.nextInt(gridWidth);
-            int y = rnd.nextInt(gridHeight);
+            int x = getRandomValue(rnd, 0, getGridWidth() - 1);
+            int y = getRandomValue(rnd, 0, getGridHeight() - 1);
             Point obstacleToAdd = new Point(x, y);
             if (!obstacles.contains(obstacleToAdd)) {
                 obstacles.add(obstacleToAdd);
