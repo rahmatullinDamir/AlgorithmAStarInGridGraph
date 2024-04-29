@@ -69,15 +69,15 @@ public class Main {
         // Define default settings and parse command-line arguments
         boolean writeToConsole = true; // Default: write grid data to console
         boolean writeToImage = true; // Default: write grid data to image
-        int resx = 20; // Default grid resolution in x-direction
-        int resy = 20; // Default grid resolution in y-direction
-        int x1 = 0; // Default start point x-coordinate
-        int y1 = 0; // Default start point y-coordinate
-        int x2 = 12; // Default end point x-coordinate
-        int y2 = 10; // Default end point y-coordinate
+        int resx = 50; // Default grid resolution in x-direction
+        int resy = 50; // Default grid resolution in y-direction
+        int x1 = 15; // Default start point x-coordinate
+        int y1 = 10; // Default start point y-coordinate
+        int x2 = 40; // Default end point x-coordinate
+        int y2 = 48; // Default end point y-coordinate
         int obstaclesNum = 20; // Default number of obstacles
         int imageMinRes = 300; // Minimal resolution for image output
-        int exp = 4; // Default number of experiments
+        int exp = 1; // Default number of experiments
         Scanner scan = new Scanner(System.in);
 
         // Parse command-line arguments
@@ -181,15 +181,6 @@ public class Main {
                     Logger.write(grid.toString());
                     Logger.writeLine("------------------------------------");
                 }
-                // Save the grid state to an image if requested
-                if (writeToImage) {
-                    String fileName = Paths.get(savesDirName, String.format("%06d.ppm", i)).toString();
-                    PPMExporter.writeFile(grid.getGrid(),
-                            grid.getGridHeight(), grid.getGridWidth(), fileName,
-                            Point.is(Point.Status.CLOSED),
-                            Point.is(Point.Status.PATH),
-                            ((resx < imageMinRes)) ? imageMinRes / resx : (resy < imageMinRes) ? imageMinRes / resy : 1);
-                }
                 // Run the A* algorithm and log the results
                 if (astr.aStarSearch(writeToConsole) != null) {
                     Logger.writeLine(grid.toString());
@@ -198,7 +189,7 @@ public class Main {
                     table[i][0] = String.valueOf(i);
                     table[i][1] = "[" + x1 + "," + y1 + "]";
                     table[i][2] = "[" + x2 + "," + y2 + "]";
-                    table[i][3] = resx + "/" + resy;
+                    table[i][3] = resx + "," + resy;
                     table[i][4] = String.valueOf(obstaclesNum);
                     table[i][5] = String.valueOf(timer.getElapsedTime()) + "[s]";
                     // Check if the current experiment is not the last one
@@ -228,6 +219,15 @@ public class Main {
                 else {
                     // Log a message if the A* algorithm couldn't find a path
                     Logger.writeLine("AStar Algorithm can't find path, try again...");
+                }
+                // Save the grid state to an image if requested
+                if (writeToImage) {
+                    String fileName = Paths.get(savesDirName, String.format("2%06d.ppm", i)).toString();
+                    PPMExporter.writeFile(grid.getGrid(),
+                            grid.getGridWidth(), grid.getGridHeight(), fileName,
+                            Point.is(Point.Status.CLOSED),
+                            Point.is(Point.Status.PATH),
+                            (((resx < imageMinRes)) ? imageMinRes / resx : (resy < imageMinRes) ? imageMinRes / resy : 1));
                 }
             } catch (Exception e) {
                 // print exception if something went wrong for example couldn't write a file.
